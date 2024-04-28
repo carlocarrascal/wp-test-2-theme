@@ -31,10 +31,7 @@ jobs:
       - run:
           name: Install PHPUnit Polyfills
           command: |
-            wget https://github.com/sebastianbergmann/phpunit-polyfills/archive/1.22.0.tar.gz
-            tar -xf 1.22.0.tar.gz
-            mv phpunit-polyfills-1.22.0/src/* /usr/share/php
-            rm -rf phpunit-polyfills-1.22.0 1.22.0.tar.gz
+            composer install yoast/phpunit-polyfills ^1.0  --ignore-platform-reqs
       - run:
           name: Install WordPress test suite
           command: |
