@@ -16,17 +16,20 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install PHP Extensions
+          name: Install PHP Extensions and MySQL Client
           command: |
-            sudo apt-get update && sudo apt-get install -y libpng-dev
+            sudo apt-get update && sudo apt-get install -y \
+              libpng-dev \
+              libpng-tools \
+              mysql-client
             docker-php-ext-install gd
-      - run:
-          name: Install Composer Dependencies
-          command: composer install --prefer-dist --no-interaction
       - run:
           name: Create WordPress Test Database
           command: |
-            mysql -e 'CREATE DATABASE wordpress_test;'
+            mysql -h 127.0.0.1 -uroot -e 'CREATE DATABASE wordpress_test;'
+      - run:
+          name: Install Composer Dependencies
+          command: composer install --prefer-dist --no-interaction
       - run:
           name: Run PHPUnit Tests
           command: ./vendor/bin/phpunit
