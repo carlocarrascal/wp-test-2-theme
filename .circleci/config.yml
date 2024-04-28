@@ -26,12 +26,12 @@ jobs:
           command: |
             mysql -h 127.0.0.1 -uroot -e 'CREATE DATABASE wordpress_test;'
       - run:
-          name: Install Composer Dependencies
-          command: composer install --prefer-dist --no-interaction --ignore-platform-reqs
-      - run:
           name: Install PHPUnit Polyfills
           command: |
-            composer install yoast/phpunit-polyfills ^1.0  --ignore-platform-reqs
+            composer require yoast/phpunit-polyfills ^1.0  --ignore-platform-reqs
+      - run:
+          name: Install Composer Dependencies
+          command: composer install --prefer-dist --no-interaction --ignore-platform-reqs
       - run:
           name: Install WordPress test suite
           command: |
