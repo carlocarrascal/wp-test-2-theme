@@ -28,7 +28,7 @@ jobs:
       - run:
           name: Install PHPUnit Polyfills
           command: |
-            composer require yoast/phpunit-polyfills ^1.0  --ignore-platform-reqs
+            composer require --dev yoast/phpunit-polyfills ^1.0  --ignore-platform-reqs
       - run:
           name: Install Composer Dependencies
           command: composer install --prefer-dist --no-interaction --ignore-platform-reqs
