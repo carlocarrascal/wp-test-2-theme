@@ -18,7 +18,7 @@ jobs:
       - run:
           name: Install PHP Extensions and MySQL Client
           command: |
-            sudo apt-get update && sudo apt-get install -y \
+            sudo apt-get update && sudo apt-get install -y phpunit\
               default-mysql-client
       - run:
           name: Create WordPress Test Database
@@ -29,7 +29,7 @@ jobs:
           command: composer install --prefer-dist --no-interaction --ignore-platform-reqs
       - run:
           name: Run PHPUnit Tests
-          command: ./vendor/bin/phpunit
+          command: phpunit
 
 workflows:
   version: 2
