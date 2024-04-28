@@ -1,113 +1,41 @@
-workflows:
-  version: 2
-  main:
-    jobs:
-      #- php56-build
-      #- php70-build
-      #- php71-build
-      #- php72-build
-      #- php73-build
-      - php74-build
-
-version: 2
-
-job-references:
-  mysql_image: &mysql_image
-    cimg/mysql:5.7
-
-  setup_environment: &setup_environment
-    name: "Setup Environment Variables"
-    command: |
-      echo "export PATH=$HOME/.composer/vendor/bin:$PATH" >> $BASH_ENV
-      source /home/circleci/.bashrc
-
-  install_dependencies: &install_dependencies
-    name: "Install Dependencies"
-    command: |
-      sudo apt-get update && sudo apt-get install subversion
-      sudo apt-get update && sudo apt-get install mariadb-client-10.3
-
-  php_job: &php_job
-    environment:
-      - WP_TESTS_DIR: "/tmp/wordpress-tests-lib"
-      - WP_CORE_DIR: "/tmp/wordpress/"
-    steps:
-      - checkout
-      - run: *setup_environment
-      - run: *install_dependencies
-      - run:
-          name: "Run Tests"
-          command: |
-            composer global require "phpunit/phpunit=5.7.*"
-            composer global require dealerdirect/phpcodesniffer-composer-installer
-            composer global require wp-coding-standards/wpcs
-            phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
-            phpcs
-            rm -rf $WP_TESTS_DIR $WP_CORE_DIR
-            bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 latest
-            phpunit
-            WP_MULTISITE=1 phpunit
+version: 2.1
 
 jobs:
-  php56-build:
-    <<: *php_job
+  build:
     docker:
-      - image: cimg/php:5.6
-      - image: *mysql_image
+      - image: circleci/php:7.4
+        environment:
+          WORDPRESS_DB_HOST: 127.0.0.1:3306
+          WORDPRESS_DB_NAME: wordpress_test
+          WORDPRESS_DB_USER: root
+          WORDPRESS_DB_PASSWORD: ""
+      - image: mysql:5.7
+        environment:
+          MYSQL_ROOT_PASSWORD: ""
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
     steps:
       - checkout
-      - run: *setup_environment
-      - run: *install_dependencies
       - run:
-          name: "Run Tests"
+          name: Install PHP Extensions
           command: |
-            composer global require "phpunit/phpunit=5.7.*"
-            composer global require wp-coding-standards/wpcs
-            phpcs --config-set installed_paths $HOME/.composer/vendor/wp-coding-standards/wpcs
-            phpcs
-            SKIP_DB_CREATE=false
-            rm -rf $WP_TESTS_DIR $WP_CORE_DIR
-            bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 4.5 $SKIP_DB_CREATE
-            phpunit
-            WP_MULTISITE=1 phpunit
-            SKIP_DB_CREATE=true
-            rm -rf $WP_TESTS_DIR $WP_CORE_DIR
-            bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 latest $SKIP_DB_CREATE
-            phpunit
-            WP_MULTISITE=1 phpunit
-            SKIP_DB_CREATE=true
-            rm -rf $WP_TESTS_DIR $WP_CORE_DIR
-            bash bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 trunk $SKIP_DB_CREATE
-            phpunit
-            WP_MULTISITE=1 phpunit
-            SKIP_DB_CREATE=true
+            sudo apt-get update && sudo apt-get install -y libpng-dev
+            docker-php-ext-install gd
+      - run:
+          name: Install Composer Dependencies
+          command: composer install --prefer-dist --no-interaction
+      - run:
+          name: Create WordPress Test Database
+          command: |
+            mysql -e 'CREATE DATABASE wordpress_test;'
+      - run:
+          name: Run PHPUnit Tests
+          command: ./vendor/bin/phpunit
 
-  php70-build:
-    <<: *php_job
-    docker:
-      - image: cimg/php:7.0
-      - image: *mysql_image
-
-  php71-build:
-    <<: *php_job
-    docker:
-      - image: cimg/php:7.1
-      - image: *mysql_image
-
-  php72-build:
-    <<: *php_job
-    docker:
-      - image: cimg/php:7.2
-      - image: *mysql_image
-
-  php73-build:
-    <<: *php_job
-    docker:
-      - image: cimg/php:7.3
-      - image: *mysql_image
-
-  php74-build:
-    <<: *php_job
-    docker:
-      - image: cimg/php:7.4
-      - image: *mysql_image
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: main
