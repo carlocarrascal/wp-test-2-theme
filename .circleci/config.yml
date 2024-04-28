@@ -18,9 +18,8 @@ jobs:
       - run:
           name: Install PHP Extensions and MySQL Client
           command: |
-            sudo apt-get update && sudo apt-get install -y phpunit\
-              default-mysql-client
             sudo apt-get update && sudo apt-get install subversion
+            default-mysql-client
       - run:
           name: Create WordPress Test Database
           command: |
@@ -38,7 +37,7 @@ jobs:
             echo 'y' | bash bin/install-wp-tests.sh wordpress_test root '' localhost latest
       - run:
           name: Run PHPUnit Tests
-          command: phpunit
+          command: ./vendor/phpunit
 
 workflows:
   version: 2
