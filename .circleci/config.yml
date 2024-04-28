@@ -3,13 +3,13 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/php:7.4
+      - image: cimg/php:7.4
         environment:
           WORDPRESS_DB_HOST: 127.0.0.1:3306
           WORDPRESS_DB_NAME: wordpress_test
           WORDPRESS_DB_USER: root
           WORDPRESS_DB_PASSWORD: ""
-      - image: mysql:5.7
+      - image: cimg/mysql:5.7
         environment:
           MYSQL_ROOT_PASSWORD: ""
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
@@ -18,12 +18,7 @@ jobs:
       - run:
           name: Install PHP Extensions and MySQL Client
           command: |
-            sudo apt-get update && sudo apt-get install -y \
-              libpng-dev \
-              libpng-tools \
-              default-mysql-client
-            sudo mkdir -p /usr/src/php && sudo chown $USER:$USER /usr/src/php
-            docker-php-ext-install gd
+            sudo apt-get update && sudo apt-get install -y 
       - run:
           name: Create WordPress Test Database
           command: |
