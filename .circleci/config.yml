@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: cimg/php:7.4
+      - image: cimg/php:8.2
         environment:
           WORDPRESS_DB_HOST: 127.0.0.1:3306
           WORDPRESS_DB_NAME: wordpress_test
@@ -31,7 +31,7 @@ jobs:
             composer require --dev phpunit/phpunit ^9
       - run:
           name: Install Composer Dependencies
-          command: composer install --prefer-dist --no-interaction --ignore-platform-reqs
+          command: composer install --prefer-dist --no-interaction
       - run:
           name: Install WordPress test suite
           command: |
