@@ -22,6 +22,7 @@ jobs:
               libpng-dev \
               libpng-tools \
               default-mysql-client
+            sudo mkdir -p /usr/src/php && sudo chown $USER /usr/src/php
             docker-php-ext-install gd
       - run:
           name: Create WordPress Test Database
