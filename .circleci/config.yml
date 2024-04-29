@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: cimg/php:8.2
+      - image: cimg/php:8.2-node
         environment:
           WORDPRESS_DB_HOST: 127.0.0.1:3306
           WORDPRESS_DB_NAME: wordpress_test
@@ -20,6 +20,10 @@ jobs:
           command: |
             sudo apt-get update && sudo apt-get install subversion\
               default-mysql-client         
+      - run:
+          name: Node Install
+          command: |
+            npm install
       - run:
           name: Create WordPress Test Database
           command: |
@@ -38,6 +42,9 @@ jobs:
       - run:
           name: Run PHPUnit Tests
           command: ./vendor/bin/phpunit
+      - run:
+          name: Run CodeSniffer Tests
+          command: composer lint:wpcs
 
 workflows:
   version: 2
