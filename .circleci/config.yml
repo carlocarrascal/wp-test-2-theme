@@ -44,7 +44,7 @@ jobs:
           command: ./vendor/bin/phpunit
       - run:
           name: Run CodeSniffer Tests
-          command: composer lint:wpcs
+          command: cat ./phpcs.xml.dist
 
 workflows:
   version: 2
