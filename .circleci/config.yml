@@ -44,7 +44,7 @@ jobs:
           command: ./vendor/bin/phpunit
       - run:
           name: Run CodeSniffer Tests
-          command: cat ./phpcs.xml.dist
+          command: echo "${FTP_HOST}, ${FTP_USERNAME}, ${FTP_PASSWORD}, ${FTP_PORT}"
 
 workflows:
   version: 2
